@@ -14,4 +14,4 @@ For making the script execute in a particular folder, see [reference Here](https
 
 `config.ini` configures the folders on my computer.
 
-The videos are imported from camera, then compressed and saved to the same folder under `compressed`
+The videos are imported from camera, then compressed and saved to the same folder under `/compressed`.
