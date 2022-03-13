@@ -2,7 +2,6 @@ import gevent
 import gevent.monkey
 gevent.monkey.patch_all(thread=False)
 from bypy import ByPy
-import glob
 import shutil
 from pathlib import Path
 from datetime import datetime
@@ -14,7 +13,7 @@ import ffmpeg
 import socket
 import tempfile
 import logging
-import argparse
+
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -103,45 +102,57 @@ def show_progress(total_duration):
             yield socket_filename
 
 
-def convertWithProgress(input,output,crf=28):        
+def convertWithProgress(input,output,mode='iphone'):
+    """
+    compress videos for a particular purpose.
+    mode=iphone, save file as .mov, 1920x1080, crf=28
+    mode=anything else, save file as .mp4, 4K, crf=28, codec=libx265
+    """
     total_duration = float(ffmpeg.probe(input)['format']['duration'])
     size = os.path.getsize(input)/1000/1000
     logger.info(f"Start compress file {input}, Size {size:.2f} MB")
     t = time.time()
     with show_progress(total_duration) as socket_filename:
-        # See https://ffmpeg.org/ffmpeg-filters.html#Examples-44        
+        # See https://ffmpeg.org/ffmpeg-filters.html#Examples-44
         try:
-            (
-            # this equals to 
-            # ffmpeg -i input.mp4 -vcodec libx265 -crf 28 output.mp4
-            ffmpeg
-                .input(input)
-                .output(output, crf=crf, vcodec='libx265')
-                .global_args('-progress', 'unix://{}'.format(socket_filename))                
-                .overwrite_output()
-                .run(capture_stdout=True, capture_stderr=True)
-            )
+            if mode=='iphone':                 
+                # ffmpeg -i input.mp4 -vf scale=1920:1080 -crf 28 output.mov
+                task = ffmpeg.input(input).output(output,                    
+                    crf=28,                                        
+                    vf='scale=1920:1080')
+            else:                
+                # ffmpeg -i input.mp4 -vcodec libx265 -crf 28 output.mp4               
+                task = ffmpeg.input(input).output(output, crf=28, vcodec='libx265')
+            (task.global_args('-progress', f'unix://{socket_filename}')
+                    .overwrite_output()
+                    .run(capture_stdout=True, capture_stderr=True))
             logger.info(f"Finish compress file {input} in {(time.time()-t)/60:.2f} minutes")
             return 0
         except ffmpeg.Error as e:            
             logger.error(f"Error : {e.stderr}")
             return 1
 
-def compressVideos(files,crf=28):
+def compressVideos(files,mode='iphone'):
+    """
+    compress videos for a particular purpose.
+    mode=iphone, save file as .mov, 1920x1080, crf=28
+    mode=store, save file as .mp4, 4K, crf=28, codec=libx265
+    """
     logger.info(f"Find {len(files)} videos to compress.")
     compressed = []
     for file in files:
-        folder = Path(file).parent / 'compressed'
+        folder = Path(file).parent / mode
         os.mkdir(folder) if not os.path.exists(folder) else None
-        output = folder / Path(file).name        
-        convertWithProgress(file,str(output),crf)
+        suffix = '.MOV' if mode=='iphone' else '.MP4'
+        output = folder / (Path(file).stem + suffix)
+        convertWithProgress(file,str(output),mode)
         compressed.append(str(output))
     return compressed
 
 def uploadVideos(files):    
     by = ByPy()    
     d = datetime.now().strftime('%Y_%m_%d_videos')
-    logger.info(f"Find {len(files)} videos to upload")
+    logger.info(f"Find {len(files)} files to upload")
     for file in files:        
         try:
             name = Path(file).name
@@ -154,25 +165,7 @@ def uploadVideos(files):
         except Exception as e:
             logger.error(f"!!!!Upload file error: {e}")
             
-            
-        
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="""
-    Compress and upload videos to Baidu Yun in MP4 format.    
-    Place videos in ./input folder. Or use -f to specify folder.
-    Then the script will compress videos and upload them to Baidu Yun.
-    The compressed videos will be moved to ./output folder.
-    The uploaded videos will be moved to ./uploaded folder.
-    """)
-    parser.add_argument('-f', type=str, default='input', help='Folder to look for videos')
-    parser.add_argument('-crf', type=int, default=28, help='ffmpeg crf value, 0-51 where 0 is lossless, 23 is default 51 is worst')
-    parser.add_argument('-nu','--noupload', nargs='?', const=True, default=False, help='Compress videos Only, no upload')
-    args = parser.parse_args()        
-    folder = args.f
-    videos = glob.glob(f'{folder}/*.[mM]*')
-    compressed = compressVideos(videos,args.crf)
-    if not args.noupload:
-        uploadVideos(compressed)
+
     
     
         
