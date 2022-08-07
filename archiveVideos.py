@@ -30,14 +30,24 @@ if __name__ == '__main__':
     folder = input('Enter folder: \n').strip()
     if folder:        
         files = getFiles(folder)
+        print(f'{len(files)} videos found in folder: {folder}')
         videosToCompress = []
+        skipStore = 0
+        skipNon264 = 0
         for file in files:
-            print('Scan files: ',file)
+            # skip video in "store folder"
+            if '/storage/' in file:
+                skipStore += 1
+                continue            
             codec = getCodec(getInfoJson(file))
             if 'H.264' in codec:
                 videosToCompress.append(file)
+            else:
+                skipNon264 += 1
         print(f'{len(videosToCompress)} files to compress')
-        compressVideos(videosToCompress,mode='store')
+        print(f'{skipStore} files skipped because in "storage" folder')
+        print(f'{skipNon264} files skipped because not H.264')
+        compressVideos(videosToCompress,mode='storage')
     else:
         print(f"{folder} is not valid folder, exit.")
             

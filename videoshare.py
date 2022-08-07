@@ -106,7 +106,7 @@ def convertWithProgress(input,output,mode='iphone'):
     """
     compress videos for a particular purpose.
     mode=iphone, save file as .mov, 1920x1080, crf=28
-    mode=store, save file as .mp4, 4K, crf=24, codec=libx264
+    mode=storage, save file as .mp4, 4K, crf=24, codec=libx264
     mode=anything else, save file as .mp4, 4K, crf=28, codec=libx265
     """
     total_duration = float(ffmpeg.probe(input)['format']['duration'])
@@ -121,7 +121,7 @@ def convertWithProgress(input,output,mode='iphone'):
                 task = ffmpeg.input(input).output(output,                    
                     crf=28,                                        
                     vf='scale=1920:1080')
-            elif mode=='store':            
+            elif mode=='storage':            
                 # libx264 is able to do live preview on mac and crf24 gives almost no quality loss, and ~ 50% size.
                 task = ffmpeg.input(input).output(output, vcodec='libx264', crf=24)                
             elif mode=='test':
@@ -145,7 +145,7 @@ def compressVideos(files,mode='iphone'):
     """
     compress videos for a particular purpose.
     mode=iphone, save file as .mov, 1920x1080, crf=28
-    mode=store, save file as .mp4, 4K, crf=28, codec=libx265
+    mode=storage, save file as .mp4, 4K, crf=28, codec=libx265
     """
     logger.info(f"Find {len(files)} videos to compress.")
     compressed = []
