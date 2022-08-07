@@ -47,7 +47,14 @@ if __name__ == '__main__':
         print(f'{len(videosToCompress)} files to compress')
         print(f'{skipStore} files skipped because in "storage" folder')
         print(f'{skipNon264} files skipped because not H.264')
-        compressVideos(videosToCompress,mode='storage')
+        makeStorage = input('Compress videos for storage? (y/n) \n').strip()
+        makeIphone = input('Compress videos for iphone? (y/n) \n').strip()
+        if makeIphone.lower() == 'y':
+            print('Compressing videos for iphone...')
+            compressVideos(videosToCompress,mode='iphone')
+        if makeStorage.lower() == 'y':
+            print('Compressing videos for storage...')
+            compressVideos(videosToCompress,mode='storage')        
     else:
         print(f"{folder} is not valid folder, exit.")
             
