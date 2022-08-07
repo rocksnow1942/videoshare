@@ -27,7 +27,7 @@ def getFiles(folder):
 
 
 if __name__ == '__main__':
-    folder = input('Enter folder: \n').trim()
+    folder = input('Enter folder: \n').strip()
     if folder:        
         files = getFiles(folder)
         videosToCompress = []
@@ -37,7 +37,7 @@ if __name__ == '__main__':
             if 'H.264' in codec:
                 videosToCompress.append(file)
         print(f'{len(videosToCompress)} files to compress')
-        compressVideos(videosToCompress,mode='H265')
+        compressVideos(videosToCompress,mode='store')
     else:
         print(f"{folder} is not valid folder, exit.")
             

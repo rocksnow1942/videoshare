@@ -106,6 +106,7 @@ def convertWithProgress(input,output,mode='iphone'):
     """
     compress videos for a particular purpose.
     mode=iphone, save file as .mov, 1920x1080, crf=28
+    mode=store, save file as .mp4, 4K, crf=24, codec=libx264
     mode=anything else, save file as .mp4, 4K, crf=28, codec=libx265
     """
     total_duration = float(ffmpeg.probe(input)['format']['duration'])
@@ -120,6 +121,14 @@ def convertWithProgress(input,output,mode='iphone'):
                 task = ffmpeg.input(input).output(output,                    
                     crf=28,                                        
                     vf='scale=1920:1080')
+            elif mode=='store':            
+                # libx264 is able to do live preview on mac and crf24 gives almost no quality loss, and ~ 50% size.
+                task = ffmpeg.input(input).output(output, vcodec='libx264', crf=24)                
+            elif mode=='test':
+                # ffmpeg -i input.mp4 -vcodec libx265 -crf 28 output.mp4               
+                # task = ffmpeg.input(input).output(output, crf=28, vcodec='libx265')
+                # libx264 is able to do live preview on mac and crf24 gives almost no quality loss, and ~ 50% size.
+                task = ffmpeg.input(input).output(output, vcodec='libx264', crf=24, **{"c:v": "h264_videotoolbox"})
             else:                
                 # ffmpeg -i input.mp4 -vcodec libx265 -crf 28 output.mp4               
                 task = ffmpeg.input(input).output(output, crf=28, vcodec='libx265')
@@ -142,7 +151,7 @@ def compressVideos(files,mode='iphone'):
     compressed = []
     for file in files:
         folder = Path(file).parent / mode
-        os.mkdir(folder) if not os.path.exists(folder) else None
+        folder.mkdir(parents=True, exist_ok=True)        
         suffix = '.MOV' if mode=='iphone' else '.MP4'
         output = folder / (Path(file).stem + suffix)
         convertWithProgress(file,str(output),mode)
@@ -166,7 +175,9 @@ def uploadVideos(files):
             logger.error(f"!!!!Upload file error: {e}")
             
 
-    
+if __name__ == "__main__":
+    file = "./test.mp4"
+    compressVideos([file], mode="test")
     
         
 

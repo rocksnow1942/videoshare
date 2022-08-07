@@ -15,6 +15,10 @@ if __name__ == "__main__":
     images, videos = getImageVides(config['CAMERA_FOLDER']['Images'],config['CAMERA_FOLDER']['Videos'] )
     newImages = organizeFile(images, config['SAVE_FOLDER']['Images'])
     newVideos = organizeFile(videos, config['SAVE_FOLDER']['Videos'])
-    compressed = compressVideos(newVideos)
-    uploadVideos(compressed)
+    compressed = compressVideos(newVideos, mode="iphone")
+    
+    # uploadVideos(compressed)
+    
+    # also compress for storage. ~ 50% the size.
+    compressVideos(newVideos, mode="store")
     
