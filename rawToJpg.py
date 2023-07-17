@@ -1,4 +1,9 @@
+"""
+for i in *.NEF; do sips -s format jpeg $i --out "${i%.*}.jpg"; done
 
+# resize jpg, almost no lost in quality
+for i in *.JPG; do sips -s format jpeg $i --out "${i%.*}.JPG"; done
+"""
 import subprocess
 import os
 from pathlib import Path
