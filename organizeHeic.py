@@ -1,3 +1,22 @@
+"""Organize HEIC files by date.
+
+How to use:
+    python organizeHeic.py -s <source_folder> -d <destination_folder>
+
+Scan and find all HEIC files in the given source folder, and move them to the
+destination folder, organized by date. The destination folder will have the
+following structure:
+    -destination_folder
+    |-YYYY
+      |-MM
+        |-file1.heic
+        |-file2.heic
+        |-...
+
+The date is determined by the EXIF DateTimeOriginal tag in the HEIC file. If
+that tag is not present, the Image DateTime tag is used instead. If neither tag
+is present, the file is skipped.
+"""
 import argparse
 import io
 import os
@@ -57,10 +76,7 @@ def organize_heic_file(source, dest):
                     while os.path.exists(target):
                         count += 1
                         target = (
-                            target.rsplit(".", 1)[0]
-                            + f"_{count}"
-                            + "."
-                            + target.rsplit(".", 1)[1]
+                            target.rsplit(".", 1)[0] + f"_{count}" + "." + target.rsplit(".", 1)[1]
                         )
                     shutil.move(os.path.join(root, f), target)
                 except Exception as e:
