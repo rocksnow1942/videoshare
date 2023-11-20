@@ -1,4 +1,4 @@
 #!/bin/bash
 cd -- "$(dirname "$BASH_SOURCE")"
-source /Volumes/store/VideoShare/venv/bin/activate
-python /Volumes/store/VideoShare/archiveVideo.py
+source /Users/hui/.virtualenvs/videoshare/bin/activate
+python /Volumes/store/VideoShare/archiveVideos.py
