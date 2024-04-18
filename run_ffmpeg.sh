@@ -9,4 +9,4 @@ mkdir -p $(dirname $output)
 
 echo "Compressing $input to $output"
 
-# ffmpeg -i $input -vcodec libx264 -crf 24 $output
+ffmpeg -i $input -vcodec libx264 -crf 24 $output
