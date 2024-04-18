@@ -17,7 +17,8 @@ script="$(dirname $0)/run_ffmpeg.sh"
 echo "Enter the directory to search for files to compress:"
 read input_dir
 
-find $input_dir -type f -regex "*.(MP4|mp4|MOV|mov)$" -not -regex '.*storage.*' >${tmp_file}
+# -E option is used to enable extended regular expressions on Mac
+find -E $input_dir -type f -regex ".*\.(MP4|mp4|MOV|mov)" -not -regex '.*storage.*' >${tmp_file}
 
 # print the number of files to compress
 file_count=$(wc -l ${tmp_file} | awk '{print $1}')
@@ -28,3 +29,7 @@ parallel -j ${cpu_count} ${script} {} <${tmp_file}
 
 # delete the temporary file
 rm $tmp_file
+
+# done, wait for user input
+echo "Done. Press enter to exit"
+read
