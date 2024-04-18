@@ -1,20 +1,22 @@
 #!/usr/bin/env python
-import configparser
+
 from pathlib import Path
 
+from config import ExternalVolume, SaveFolder
 from sonyA7Cimport import getImageVides, organizeFile
 from videoshare import compressVideos, uploadVideos
 
-config = configparser.ConfigParser()
-config.read(Path(__file__).parent / "config.ini")
-
-
 if __name__ == "__main__":
-    images, videos = getImageVides(
-        config["CAMERA_FOLDER"]["Images"], config["CAMERA_FOLDER"]["Videos"]
-    )
-    newImages = organizeFile(images, config["SAVE_FOLDER"]["Images"])
-    newVideos = organizeFile(videos, config["SAVE_FOLDER"]["Videos"])
+    images = []
+    videos = []
+    for folder in ExternalVolume.folders:
+        if not folder.exists():
+            continue
+        img, vid = getImageVides(folder)
+        images.extend(img)
+        videos.extend(vid)
+    newImages = organizeFile(images, SaveFolder.images)
+    newVideos = organizeFile(videos, SaveFolder.videos)
     # compressed = compressVideos(newVideos, mode="iphone")
 
     # uploadVideos(compressed)
