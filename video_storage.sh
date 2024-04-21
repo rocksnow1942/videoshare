@@ -10,7 +10,7 @@
 # 'storage' subdirectory
 
 tmp_file="/tmp/files_to_compress.txt"
-cpu_count=$(sysctl -n hw.ncpu)
+cpu_count=$(($(sysctl -n hw.ncpu) / 2 - 1)) # physical cores minus 1
 script="$(dirname $0)/run_ffmpeg.sh"
 
 # prompt user for input directory
