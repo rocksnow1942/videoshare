@@ -17,6 +17,8 @@ from pathlib import Path
 PATTERNS = (
     # Osmo pocket 3 videos: DJI_20240504121852_0028_D.MP4
     re.compile(r"DJI_(?P<year>20\d{2})(?P<month>[01]\d)(?P<day>[0123]\d)"),
+    # sony A7c videos: 20230716_A0638.MP4
+    re.compile(r"(?P<year>20\d{2})(?P<month>[01]\d)(?P<day>[0123]\d)_A"),
 )
 
 IMAGE_SUFFIX = ("JPG", "ARW", "jpg", "arw")
