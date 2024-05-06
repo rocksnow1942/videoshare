@@ -6,7 +6,7 @@ from pathlib import Path
 
 import ffmpeg
 
-from videoshare import compressVideos
+from video_compress import compressVideos
 
 
 def getInfoJson(file):

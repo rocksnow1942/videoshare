@@ -164,25 +164,6 @@ def compressVideos(files, mode="iphone"):
     return compressed
 
 
-def uploadVideos(files):
-    from bypy import ByPy
-
-    by = ByPy()
-    d = datetime.now().strftime("%Y_%m_%d_videos")
-    logger.info(f"Find {len(files)} files to upload")
-    for file in files:
-        try:
-            name = Path(file).name
-            size = os.path.getsize(file) / 1000 / 1000
-            logger.info(f"Start upload file : {name}, Size {size:.2f} MB")
-            t0 = time.time()
-            by.upload(file, f"{d}/{name}", ondup="newcopy")
-            dt = time.time() - t0
-            logger.info(f"Finished upload file in {dt/60:.2f} minutes")
-        except Exception as e:
-            logger.error(f"!!!!Upload file error: {e}")
-
-
 if __name__ == "__main__":
     file = "./test.mp4"
     compressVideos([file], mode="test")
