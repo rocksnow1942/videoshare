@@ -9,5 +9,5 @@ class ExternalVolume:
 
 
 class SaveFolder:
-    images: pathlib.Path = pathlib.Path("/Volumes/store/Pictures")
+    images: pathlib.Path = pathlib.Path("/Volumes/store/Photos")
     videos: pathlib.Path = pathlib.Path("/Volumes/store/Videos")

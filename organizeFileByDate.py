@@ -113,7 +113,7 @@ def organizeFile(
 
 if __name__ == "__main__":
     source = "/Volumes/store/temp"
-    destination = "/Volumes/store/Pictures"
+    destination = "/Volumes/store/Photos"
     # take source and dest folder as arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--source", help="source folder", default=source)
