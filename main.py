@@ -19,7 +19,7 @@ if __name__ == "__main__":
         print("No images or videos found in external volume")
         ans = input("Enter local folder to organize files, or enter to exit:\n")
         if ans:
-            images, videos = getImageVides(pathlib.Path(ans))
+            images, videos = getImageVides(pathlib.Path(ans.strip()))
         else:
             exit(0)
 
